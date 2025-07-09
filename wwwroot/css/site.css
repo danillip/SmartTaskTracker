@@ -19,4 +19,12 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
 }
+
+header nav {
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.offcanvas-body .nav-link {
+  margin-bottom: 0.5rem;}

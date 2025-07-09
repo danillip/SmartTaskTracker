@@ -1,0 +1,26 @@
+@model IEnumerable<SmartTaskTracker.Models.Event>
+<h1>Events</h1>
+@if (User.IsInRole("Admin"))
+{
+    <p><a asp-action="Create">Create New</a></p>
+}
+<table class="table">
+    <tr><th>Title</th><th>Start</th><th>End</th><th></th></tr>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.Title</td>
+        <td>@item.StartUtc</td>
+        <td>@item.EndUtc</td>
+        <td>
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a><span class="mx-1">|</span>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><span class="mx-1">|</span>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a><span class="mx-1">|</span>
+            }
+            <a asp-action="Ics" asp-route-id="@item.Id">ICS</a>
+        </td>
+    </tr>
+}
+</table>

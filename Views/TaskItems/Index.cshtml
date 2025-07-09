@@ -1,0 +1,53 @@
+@model IEnumerable<SmartTaskTracker.Models.TaskItem>
+@{
+    ViewData["Title"] = "Tasks";
+}
+<form method="get" class="row g-2">
+    <div class="col"><input name="search" class="form-control" placeholder="Search" value="@Context.Request.Query["search"]" /></div>
+    <div class="col">
+        <select name="status" class="form-select">
+            <option value="">All</option>
+@foreach (var s in Enum.GetValues(typeof(SmartTaskTracker.Models.TaskStatus)))
+{
+    <option value="@s" selected="@(Context.Request.Query["status"]==s.ToString()?"selected":null)">@s</option>
+}
+        </select>
+    </div>
+    <div class="col">
+        <select name="sort" class="form-select">
+            <option value="">Id</option>
+            <option value="deadline" selected="@(Context.Request.Query["sort"]=="deadline"?"selected":null)">Deadline</option>
+            <option value="executor" selected="@(Context.Request.Query["sort"]=="executor"?"selected":null)">Executor</option>
+        </select>
+    </div>
+    <div class="col"><button type="submit" class="btn btn-primary">Filter</button></div>
+</form>
+<table class="table">
+    <tr><th>Title</th><th>Deadline</th><th>Status</th><th>Report</th><th>Executor</th><th>Event</th><th></th></tr>
+    @foreach(var item in Model)
+    {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.DeadlineUtc</td>
+            <td>@item.Status</td>
+            <td>@item.Report</td>
+            <td>@item.Executor.UserName</td>
+            <td>@item.Event.Title</td>
+            <td>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><span class="mx-1">|</span>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            }
+            else
+            {
+                <a asp-action="Report" asp-route-id="@item.Id">Report</a>
+            }
+            </td>
+        </tr>
+    }
+</table>
+@if (User.IsInRole("Admin"))
+{
+    <p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+}

@@ -1,0 +1,8 @@
+@model SmartTaskTracker.Models.TaskItem
+<h2>Delete Task</h2>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>Are you sure you want to delete @Model.Title?</p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

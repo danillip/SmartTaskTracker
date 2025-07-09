@@ -1,0 +1,16 @@
+@model SmartTaskTracker.Models.Event
+<h2>Event Details</h2>
+<div>
+    <h4>@Model.Title</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Start</dt>
+        <dd class="col-sm-10">@Model.StartUtc</dd>
+        <dt class="col-sm-2">End</dt>
+        <dd class="col-sm-10">@Model.EndUtc</dd>
+    </dl>
+    <a asp-action="Ics" asp-route-id="@Model.Id">Download ICS</a>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

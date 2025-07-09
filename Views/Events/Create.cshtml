@@ -1,0 +1,17 @@
+@model SmartTaskTracker.Models.Event
+<h2>Create Event</h2>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="StartUtc" class="form-label"></label>
+        <input asp-for="StartUtc" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="EndUtc" class="form-label"></label>
+        <input asp-for="EndUtc" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

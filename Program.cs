@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartTaskTracker.Data;
+using SmartTaskTracker.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<AppUser>(o =>
+{
+    o.SignIn.RequireConfirmedAccount = false;
+})
+    .AddRoles<IdentityRole<int>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -39,5 +44,21 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+using (var scope = app.Services.CreateScope())
+{
+    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-app.Run();
+    foreach (var r in new[] { "Admin", "User" })
+        if (!await roleMgr.RoleExistsAsync(r))
+            await roleMgr.CreateAsync(new IdentityRole<int>(r));
+
+    if (await userMgr.FindByNameAsync("admin") is null)
+    {
+        var admin = new AppUser { UserName = "admin", Email = "admin@local" };
+        await userMgr.CreateAsync(admin, "P@ssw0rd!");
+        await userMgr.AddToRoleAsync(admin, "Admin");
+    }
+}
+
+await app.RunAsync();

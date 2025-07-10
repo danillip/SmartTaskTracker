@@ -1,8 +1,33 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4">Привет!</h1>
+    <p class="lead">
+        Добро пожаловать в SmartTaskTracker — простую систему учёта задач и событий.
+    </p>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <p>
+            <a asp-controller="TaskItems" asp-action="Create"
+               class="btn btn-primary btn-lg">
+                Создать первую задачу
+            </a>
+        </p>
+    }
+    else
+    {
+        <p>
+            <a asp-area="Identity" asp-page="/Account/Register"
+               class="btn btn-primary btn-lg me-2">
+                Зарегистрироваться
+            </a>
+            <a asp-area="Identity" asp-page="/Account/Login"
+               class="btn btn-outline-secondary btn-lg">
+                Войти
+            </a>
+        </p>
+    }
 </div>

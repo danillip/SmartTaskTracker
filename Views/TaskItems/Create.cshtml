@@ -1,29 +1,77 @@
 @model SmartTaskTracker.Models.TaskItem
-@{ ViewData["Title"] = "Create Task"; }
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Создать задачу";
+}
+
+<h1>@ViewData["Title"]</h1>
+
 <form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <!-- Title -->
     <div class="mb-3">
         <label asp-for="Title" class="form-label"></label>
         <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
     </div>
+
+    <!-- Deadline -->
     <div class="mb-3">
         <label asp-for="DeadlineUtc" class="form-label"></label>
-        <input asp-for="DeadlineUtc" class="form-control" type="datetime-local" />
+        <input asp-for="DeadlineUtc"
+               type="datetime-local"
+               class="form-control"
+               asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        <span asp-validation-for="DeadlineUtc" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Report" class="form-label"></label>
-        <textarea asp-for="Report" class="form-control"></textarea>
-    </div>
+
+    <!-- Status -->
     <div class="mb-3">
         <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>()" class="form-select"></select>
+        <select asp-for="Status"
+                class="form-select"
+                asp-items="Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="ExecutorId" class="form-label"></label>
-        <select asp-for="ExecutorId" asp-items="ViewBag.ExecutorId" class="form-select"></select>
-    </div>
+
+    <!-- Event -->
     <div class="mb-3">
         <label asp-for="EventId" class="form-label"></label>
-        <select asp-for="EventId" asp-items="ViewBag.EventId" class="form-select"></select>
+        <select asp-for="EventId"
+                class="form-select"
+                asp-items="@(ViewData["EventId"] as SelectList)">
+        </select>
+        <span asp-validation-for="EventId" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Create</button>
+
+    <!-- Executor -->
+    <div class="mb-3">
+        <label asp-for="ExecutorId" class="form-label"></label>
+        <select asp-for="ExecutorId"
+                class="form-select"
+                asp-items="@(ViewData["ExecutorId"] as SelectList)">
+        </select>
+        <span asp-validation-for="ExecutorId" class="text-danger"></span>
+    </div>
+
+    <!-- Report -->
+    <div class="mb-3">
+        <label asp-for="Report" class="form-label"></label>
+        <textarea asp-for="Report" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Report" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Отмена</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

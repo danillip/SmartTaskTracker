@@ -1,17 +1,58 @@
-@model SmartTaskTracker.Models.TaskItem
+﻿@model SmartTaskTracker.Models.TaskItem
+
 @{
-    ViewData["Title"] = "Report";
+    ViewData["Title"] = "Отчёт по задаче";
 }
-<h2>Report on Task</h2>
-<form asp-action="Report" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="Report" class="form-label"></label>
-        <textarea asp-for="Report" class="form-control"></textarea>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>()" class="form-select"></select>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+
+<div class="neon-panel" style="max-width:800px; margin:2rem auto;">
+    <h1 style="text-align:center; color:var(--neon-cyan);">@ViewData["Title"]</h1>
+
+    <dl class="row">
+        <dt class="col-sm-2">Название</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+
+        <dt class="col-sm-2">Дедлайн</dt>
+        <dd class="col-sm-10">@Model.DeadlineUtc.ToString("g")</dd>
+
+        <dt class="col-sm-2">Исполнитель</dt>
+        <dd class="col-sm-10">@Model.Executor?.UserName</dd>
+
+        <dt class="col-sm-2">Событие</dt>
+        <dd class="col-sm-10">@Model.Event?.Title</dd>
+    </dl>
+
+    <form asp-action="Report" method="post" id="reportForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="form-group">
+            <label asp-for="Status" class="form-label">Статус</label>
+            <select asp-for="Status" class="form-control">
+                @foreach (var s in Enum.GetValues(typeof(SmartTaskTracker.Models.TaskStatus)).Cast<SmartTaskTracker.Models.TaskStatus>())
+                {
+                    var val = s.ToString();
+                    if (Model.Status == s)
+                    {
+                        <option value="@val" selected>@val</option>
+                    }
+                    else
+                    {
+                        <option value="@val">@val</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Report" class="form-label">Отчёт</label>
+            <textarea asp-for="Report" class="form-control" rows="4">@Model.Report</textarea>
+            <span asp-validation-for="Report" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn-futuristic">Сохранить</button>
+        <a asp-action="Index" class="btn-futuristic">Назад</a>
+    </form>
+</div>

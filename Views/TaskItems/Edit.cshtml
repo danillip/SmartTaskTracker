@@ -1,30 +1,96 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
 @model SmartTaskTracker.Models.TaskItem
-@{ ViewData["Title"] = "Edit Task"; }
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" />
+
+@{
+    ViewData["Title"] = "Редактировать задачу";
+    var execList = ViewData["ExecutorId"] as SelectList;
+    var evList = ViewData["EventId"] as SelectList;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - SmartTaskTracker</title>
+    <link rel="stylesheet" href="~/css/futuristic.css" />
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="neon-panel">
+        @if (User.IsInRole("Admin"))
+        {
+            <form asp-action="Edit" method="post" id="editForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Название</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DeadlineUtc" class="form-label">Дедлайн</label>
+                    <input asp-for="DeadlineUtc" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="DeadlineUtc" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Report" class="form-label">Отчёт</label>
+                    <textarea asp-for="Report" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Report" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Статус</label>
+                    <select asp-for="Status"
+                            class="form-select"
+                            asp-items="@(Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>())">
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ExecutorId" class="form-label">Исполнитель</label>
+                    <select asp-for="ExecutorId"
+                            class="form-select"
+                            asp-items="execList"
+                            asp-option-label="-- Выберите исполнителя --">
+                    </select>
+                    <span asp-validation-for="ExecutorId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventId" class="form-label">Событие</label>
+                    <select asp-for="EventId"
+                            class="form-select"
+                            asp-items="evList"
+                            asp-option-label="-- Выберите событие --">
+                    </select>
+                    <span asp-validation-for="EventId" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-futuristic">Сохранить</button>
+                <a asp-action="Index" class="btn-futuristic">Назад</a>
+            </form>
+        }
+        else
+        {
+            <p class="text-danger">У вас нет прав для редактирования задач.</p>
+        }
     </div>
-    <div class="mb-3">
-        <label asp-for="DeadlineUtc" class="form-label"></label>
-        <input asp-for="DeadlineUtc" class="form-control" type="datetime-local" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="Report" class="form-label"></label>
-        <textarea asp-for="Report" class="form-control"></textarea>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>()" class="form-select"></select>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ExecutorId" class="form-label"></label>
-        <select asp-for="ExecutorId" asp-items="ViewBag.ExecutorId" class="form-select"></select>
-    </div>
-    <div class="mb-3">
-        <label asp-for="EventId" class="form-label"></label>
-        <select asp-for="EventId" asp-items="ViewBag.EventId" class="form-select"></select>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        console.log("DEBUG: Edit.cshtml загружен");
+        $("#editForm").on("submit", function() {
+            console.log("DEBUG: Edit form →", $(this).serialize());
+        });
+    </script>
+</body>
+</html>

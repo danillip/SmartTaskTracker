@@ -2,32 +2,31 @@
     ViewData["Title"] = "Главная";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Привет!</h1>
-    <p class="lead">
-        Добро пожаловать в SmartTaskTracker — простую систему учёта задач и событий.
-    </p>
+<main>
+    <div class="neon-panel centered">
+        <h1>Добро пожаловать в SmartTaskTracker</h1>
+        <p>Простая система учёта задач и событий.</p>
 
-    @if (User.Identity?.IsAuthenticated ?? false)
-    {
-        <p>
-            <a asp-controller="TaskItems" asp-action="Create"
-               class="btn btn-primary btn-lg">
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <a asp-controller="TaskItems"
+               asp-action="Create"
+               class="btn-futuristic btn-futuristic-lg">
                 Создать первую задачу
             </a>
-        </p>
-    }
-    else
-    {
-        <p>
-            <a asp-area="Identity" asp-page="/Account/Register"
-               class="btn btn-primary btn-lg me-2">
-                Зарегистрироваться
+        }
+        else
+        {
+            <a asp-area="Identity"
+               asp-page="/Account/Register"
+               class="btn-futuristic btn-futuristic-lg me-3">
+                Регистрация
             </a>
-            <a asp-area="Identity" asp-page="/Account/Login"
-               class="btn btn-outline-secondary btn-lg">
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               class="btn-futuristic btn-futuristic-lg">
                 Войти
             </a>
-        </p>
-    }
-</div>
+        }
+    </div>
+</main>

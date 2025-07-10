@@ -1,70 +1,64 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<SmartTaskTracker.Models.AppUser> SignInManager
+@inject UserManager<SmartTaskTracker.Models.AppUser> UserManager
+
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] – SmartTaskTracker</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/futuristic.css" />
 </head>
-<body class="d-flex flex-column min-vh-100">
-
-    <!-- Шапка -->
+<body>
+    <!-- HEADER / NAV -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    SmartTaskTracker
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#mainNavbar" aria-controls="mainNavbar"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Events" asp-action="Index">Events</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="TaskItems" asp-action="Index">Tasks</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <li class="nav-item"><span class="navbar-text me-2">Привет, @User.Identity.Name!</span></li>
-                            <li class="nav-item">
-                                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-light btn-sm">Выход</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item"><a class="btn btn-outline-light btn-sm me-2" asp-area="Identity" asp-page="/Account/Login">Вход</a></li>
-                            <li class="nav-item"><a class="btn btn-primary btn-sm" asp-area="Identity" asp-page="/Account/Register">Регистрация</a></li>
-                        }
-                    </ul>
-                </div>
+        <nav class="neon-panel" style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+            <div>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn-futuristic">SmartTaskTracker</a>
+                <text> | </text>
+                <a asp-controller="Home" asp-action="Index" class="btn-futuristic">Home</a>
+                <text> | </text>
+                <a asp-controller="Events" asp-action="Index" class="btn-futuristic">Events</a>
+                <text> | </text>
+                <a asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
+                <text> | </text>
+                <a asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Privacy</a>
+            </div>
+            <div>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <span style="margin-right:1rem; color:var(--neon-cyan);">
+                        Привет, @UserManager.GetUserName(User)!
+                    </span>
+                    <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="display:inline;">
+                        <button type="submit" class="btn-futuristic">Выход</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn-futuristic">Вход</a>
+                    <text> </text>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn-futuristic">Регистрация</a>
+                }
             </div>
         </nav>
     </header>
 
-    <!-- Основной контент растягивается, с отступом снизу под фикс-футер -->
-    <main class="flex-grow-1 pb-5">
-        <div class="container py-4">
-            @RenderBody()
-        </div>
+    <!-- MAIN CONTENT -->
+    <main>
+        @RenderBody()
     </main>
 
-    <!-- Футер всегда внизу -->
-    <footer class="bg-light text-center py-3 fixed-bottom">
-        <div class="container">
-            © 2025 – SmartTaskTracker
-        </div>
+    <!-- FOOTER (липкий) -->
+    <footer class="neon-panel" style="text-align:center;">
+        © 2025 – SmartTaskTracker
     </footer>
 
+    <!-- SCRIPTS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

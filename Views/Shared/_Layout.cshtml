@@ -17,16 +17,16 @@
             <div>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="btn-futuristic">SmartTaskTracker</a>
                 <text> | </text>
-                <a asp-controller="Home" asp-action="Index" class="btn-futuristic">Home</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn-futuristic">Home</a>
                 <text> | </text>
-                <a asp-controller="Events" asp-action="Index" class="btn-futuristic">Events</a>
+                <a asp-area="" asp-controller="Events" asp-action="Index" class="btn-futuristic">Events</a>
                 <text> | </text>
-                <a asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
-                @* Показываем «Админка» только для Admin, но ведёт на Privacy *@
+                <a asp-area="" asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
+                @* Показываем «Админка» только для Admin *@
                 @if (User.IsInRole("Admin"))
                 {
                     <text> | </text>
-                    <a asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Админка</a>
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn-futuristic">Админка</a>
                 }
             </div>
             <div>

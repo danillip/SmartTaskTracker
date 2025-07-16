@@ -24,6 +24,7 @@
 
     <div style="text-align:right; margin-top:1.5rem;">
         <a asp-action="Index" class="btn-futuristic">Назад</a>
+        <a asp-action="Ics" asp-route-id="@Model.Id" class="btn-futuristic">Скачать ICS</a>
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-futuristic">Редактировать</a>

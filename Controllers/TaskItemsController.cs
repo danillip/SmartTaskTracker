@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using SmartTaskTracker.Data;
 using SmartTaskTracker.Models;
 
-// Чтобы не путать с System.Threading.Tasks.TaskStatus
 using TaskItemStatus = SmartTaskTracker.Models.TaskStatus;
 
 namespace SmartTaskTracker.Controllers
@@ -35,7 +34,6 @@ namespace SmartTaskTracker.Controllers
 							.Include(t => t.Executor)
 							.AsQueryable();
 
-			// Обычные юзеры видят только свои задачи
 			if (!User.IsInRole("Admin"))
 			{
 				var uid = int.Parse(_userManager.GetUserId(User)!);
@@ -72,7 +70,6 @@ namespace SmartTaskTracker.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create([Bind("Id,Title,DeadlineUtc,Report,Status,ExecutorId,EventId")] TaskItem item)
 		{
-			// Снимаем стандартную ошибку по DeadlineUtc и парсим вручную из формы
 			var raw = Request.Form["DeadlineUtc"].FirstOrDefault() ?? "";
 			ModelState.Remove(nameof(item.DeadlineUtc));
 			if (DateTime.TryParseExact(raw,
@@ -89,7 +86,6 @@ namespace SmartTaskTracker.Controllers
 					"Неверный формат даты. Используйте выпадающий селектор или ГГГГ-MM-ддTHH:mm.");
 			}
 
-			// Снимаем ошибки по навигационным свойствам
 			ModelState.Remove(nameof(item.Executor));
 			ModelState.Remove(nameof(item.Event));
 
@@ -206,7 +202,6 @@ namespace SmartTaskTracker.Controllers
 									 .FirstOrDefaultAsync(m => m.Id == id);
 			if (item == null) return NotFound();
 
-			// Обычные юзеры — только свои задачи
 			if (!User.IsInRole("Admin"))
 			{
 				var uid = int.Parse(_userManager.GetUserId(User)!);
@@ -222,38 +217,32 @@ namespace SmartTaskTracker.Controllers
 		[Authorize]
 		public async Task<IActionResult> Report(int id, [Bind("Report,Status")] TaskItem input)
 		{
-			// Подгружаем исходный объект с навигационными свойствами
 			var item = await _context.TaskItems
 									 .Include(t => t.Executor)
 									 .Include(t => t.Event)
 									 .FirstOrDefaultAsync(m => m.Id == id);
 			if (item == null) return NotFound();
 
-			// Проверка прав обычных пользователей
 			if (!User.IsInRole("Admin"))
 			{
 				var uid = int.Parse(_userManager.GetUserId(User)!);
 				if (item.ExecutorId != uid) return Forbid();
 			}
 
-			// Убираем ошибки валидации по полям, которых нет в форме
 			ModelState.Remove(nameof(item.Title));
 			ModelState.Remove(nameof(item.DeadlineUtc));
 			ModelState.Remove(nameof(item.ExecutorId));
 			ModelState.Remove(nameof(item.EventId));
-			// Навигационные свойства (на всякий случай)
 			ModelState.Remove(nameof(item.Executor));
 			ModelState.Remove(nameof(item.Event));
 
 			if (!ModelState.IsValid)
 			{
-				// Сохраняем введённые значения, чтобы они отобразились
 				item.Report = input.Report;
 				item.Status = input.Status;
 				return View(item);
 			}
 
-			// Применяем и сохраняем изменения
 			item.Report = input.Report;
 			item.Status = input.Status;
 			_context.Update(item);

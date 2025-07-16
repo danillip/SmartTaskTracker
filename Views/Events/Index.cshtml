@@ -42,6 +42,7 @@
                             <a asp-action="Details" asp-route-id="@evt.Id" class="btn-futuristic">
                                 Просмотр
                             </a>
+                            <a asp-action="Ics" asp-route-id="@evt.Id" class="btn-futuristic">Скачать ICS</a>
                             @if (User.IsInRole("Admin"))
                             {
                                 <a asp-action="Edit" asp-route-id="@evt.Id" class="btn-futuristic">

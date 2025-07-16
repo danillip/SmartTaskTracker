@@ -23,7 +23,10 @@
                 <text> | </text>
                 <a asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
                 <text> | </text>
-                <a asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Privacy</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Users" asp-action="Index" class="btn-futuristic">Admin</a>
+                }
             </div>
             <div>
                 @if (SignInManager.IsSignedIn(User))

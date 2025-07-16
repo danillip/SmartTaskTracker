@@ -1,0 +1,51 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SmartTaskTracker.Models
+@inject UserManager<AppUser> UserManager
+
+@model IEnumerable<AppUser>
+
+@{
+    ViewData["Title"] = "Управление пользователями";
+}
+
+<h1 class="neon-glow" style="margin-top:2rem;">@ViewData["Title"]</h1>
+
+<div class="neon-panel" style="max-width:1200px; width:90%; margin:1rem auto; overflow-x:auto;">
+    <table class="table-futuristic" style="width:100%;">
+        <thead>
+            <tr>
+                <th style="width:30%;">Email</th>
+                <th style="width:20%;">Имя пользователя</th>
+                <th style="width:30%;">Роли</th>
+                <th style="width:20%; text-align:center;">Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                var roles = await UserManager.GetRolesAsync(user);
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.UserName</td>
+                    <td>
+                        @if (roles.Any())
+                        {
+                            @string.Join(", ", roles)
+                        }
+                        else
+                        {
+                            <em>нет</em>
+                        }
+                    </td>
+                    <td style="text-align:center; white-space:nowrap;">
+                        <a asp-action="EditRoles"
+                           asp-route-id="@user.Id"
+                           class="btn-futuristic">
+                            Назначить роли
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

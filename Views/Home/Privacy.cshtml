@@ -1,6 +1,31 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Админка";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<h1 style="text-align:center; color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); margin-top:2rem;">
+    Админка
+</h1>
+
+@* Показываем только Admin *@
+@if (User.IsInRole("Admin"))
+{
+    <div class="neon-panel" style="max-width:800px; margin:2rem auto;">
+        <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn-futuristic">
+                Управление пользователями
+            </a>
+            <a asp-area="Admin" asp-controller="Roles" asp-action="Index" class="btn-futuristic">
+                Назначение ролей
+            </a>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Statistics" class="btn-futuristic">
+                Статистика системы
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="neon-panel" style="max-width:600px; margin:2rem auto; text-align:center;">
+        <p>У вас нет доступа к админской панели.</p>
+    </div>
+}

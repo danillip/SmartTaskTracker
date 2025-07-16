@@ -1,0 +1,67 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<SmartTaskTracker.Models.AppUser> SignInManager
+@inject UserManager<SmartTaskTracker.Models.AppUser> UserManager
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] – SmartTaskTracker</title>
+    <link rel="stylesheet" href="~/css/futuristic.css" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- HEADER / NAV -->
+    <header>
+        <nav class="neon-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; padding:1rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn-futuristic">SmartTaskTracker</a>
+                <span>|</span>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn-futuristic">Home</a>
+                <span>|</span>
+                <a asp-area="" asp-controller="Events" asp-action="Index" class="btn-futuristic">Events</a>
+                <span>|</span>
+                <a asp-area="" asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
+                <span>|</span>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Privacy</a>
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <span>|</span>
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn-futuristic">Админка</a>
+                }
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <span style="color:var(--neon-cyan);">Привет, @UserManager.GetUserName(User)!</span>
+                    <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="margin:0;">
+                        <button type="submit" class="btn-futuristic">Выход</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="" asp-page="/Account/Login" class="btn-futuristic">Вход</a>
+                    <a asp-area="" asp-page="/Account/Register" class="btn-futuristic">Регистрация</a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow-1 pb-5">
+        <div class="container py-4">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="neon-panel" style="text-align:center; margin-top:auto; padding:1rem;">
+        © 2025 – SmartTaskTracker
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

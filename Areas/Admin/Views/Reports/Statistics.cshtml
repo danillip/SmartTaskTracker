@@ -1,0 +1,20 @@
+﻿@model SmartTaskTracker.Areas.Admin.Controllers.StatisticsViewModel
+
+@{
+    ViewData["Title"] = "Статистика системы";
+}
+
+<h1 class="neon-panel centered" style="max-width:600px;">@ViewData["Title"]</h1>
+
+<div class="neon-panel" style="max-width:600px; margin:2rem auto;">
+    <dl class="row">
+        <dt class="col-sm-6">Всего пользователей</dt>
+        <dd class="col-sm-6">@Model.TotalUsers</dd>
+
+        <dt class="col-sm-6">Всего задач</dt>
+        <dd class="col-sm-6">@Model.TotalTasks</dd>
+
+        <dt class="col-sm-6">Выполненных задач</dt>
+        <dd class="col-sm-6">@Model.CompletedTasks</dd>
+    </dl>
+</div>

@@ -1,0 +1,41 @@
+﻿@using SmartTaskTracker.Areas.Admin.Controllers
+@model EditRolesViewModel
+
+@{
+    ViewData["Title"] = "Редактировать роли";
+}
+
+<div class="neon-panel centered" style="max-width:600px; margin:2rem auto;">
+    <h1 style="text-align:center; color:var(--neon-cyan);">
+        @ViewData["Title"] — @Model.Email
+    </h1>
+
+    <form asp-action="EditRoles" asp-route-id="@Model.UserId" method="post">
+        <input type="hidden" asp-for="UserId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        @for (int i = 0; i < Model.Roles.Count; i++)
+        {
+            <div class="form-check" style="margin-bottom:0.5rem;">
+                <input asp-for="Roles[@i].IsSelected"
+                       class="form-check-input"
+                       id="role_@i" />
+                <label class="form-check-label neon-glow" for="role_@i">
+                    @Model.Roles[i].RoleName
+                </label>
+            </div>
+        }
+
+        <div style="margin-top:1.5rem; display:flex; gap:1rem;">
+            <button type="submit" class="btn-futuristic">
+                Сохранить
+            </button>
+            <a asp-action="Index" class="btn-futuristic">Назад</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

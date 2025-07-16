@@ -22,8 +22,12 @@
                 <a asp-controller="Events" asp-action="Index" class="btn-futuristic">Events</a>
                 <text> | </text>
                 <a asp-controller="TaskItems" asp-action="Index" class="btn-futuristic">Tasks</a>
-                <text> | </text>
-                <a asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Privacy</a>
+                @* Показываем «Админка» только для Admin, но ведёт на Privacy *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <text> | </text>
+                    <a asp-controller="Home" asp-action="Privacy" class="btn-futuristic">Админка</a>
+                }
             </div>
             <div>
                 @if (SignInManager.IsSignedIn(User))

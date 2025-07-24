@@ -1,26 +1,61 @@
 @model IEnumerable<SmartTaskTracker.Models.Event>
-<h1>Events</h1>
-@if (User.IsInRole("Admin"))
-{
-    <p><a asp-action="Create">Create New</a></p>
+
+@{
+    ViewData["Title"] = "События";
 }
-<table class="table">
-    <tr><th>Title</th><th>Start</th><th>End</th><th></th></tr>
-@foreach (var item in Model)
-{
-    <tr>
-        <td>@item.Title</td>
-        <td>@item.StartUtc</td>
-        <td>@item.EndUtc</td>
-        <td>
-            <a asp-action="Details" asp-route-id="@item.Id">Details</a><span class="mx-1">|</span>
-            @if (User.IsInRole("Admin"))
-            {
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><span class="mx-1">|</span>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a><span class="mx-1">|</span>
-            }
-            <a asp-action="Ics" asp-route-id="@item.Id">ICS</a>
-        </td>
-    </tr>
-}
-</table>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] – SmartTaskTracker</title>
+    <link rel="stylesheet" href="~/css/futuristic.css" />
+</head>
+<body>
+    <h1 style="text-align:center; margin-top:2rem; color:var(--neon-cyan);">
+        @ViewData["Title"]
+    </h1>
+
+    <div class="neon-panel" style="width:100%; padding:1rem; margin:2rem auto;">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn-futuristic">
+                Создать событие
+            </a>
+        }
+    </div>
+
+    <div class="neon-panel" style="width:100%; padding:1rem; overflow-x:auto;">
+        <table class="table-futuristic" style="width:100%;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">@Html.DisplayNameFor(m => m.Title)</th>
+                    <th style="text-align:center; width:30%;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var evt in Model)
+                {
+                    <tr>
+                        <td>@evt.Title</td>
+                        <td style="text-align:center; white-space:nowrap;">
+                            <a asp-action="Details" asp-route-id="@evt.Id" class="btn-futuristic">
+                                Просмотр
+                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@evt.Id" class="btn-futuristic">
+                                    Редактировать
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@evt.Id" class="btn-futuristic">
+                                    Удалить
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

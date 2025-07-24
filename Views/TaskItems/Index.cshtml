@@ -1,53 +1,128 @@
 @model IEnumerable<SmartTaskTracker.Models.TaskItem>
+@using TaskStatus = SmartTaskTracker.Models.TaskStatus
+
 @{
-    ViewData["Title"] = "Tasks";
+    ViewData["Title"] = "Задачи";
+    var query = Context.Request.Query;
+    var currentSearch = query["search"].ToString();
+    var currentStatus = query["status"].ToString();
+    var currentSort = query["sort"].ToString();
 }
-<form method="get" class="row g-2">
-    <div class="col"><input name="search" class="form-control" placeholder="Search" value="@Context.Request.Query["search"]" /></div>
-    <div class="col">
-        <select name="status" class="form-select">
-            <option value="">All</option>
-@foreach (var s in Enum.GetValues(typeof(SmartTaskTracker.Models.TaskStatus)))
-{
-    <option value="@s" selected="@(Context.Request.Query["status"]==s.ToString()?"selected":null)">@s</option>
-}
-        </select>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] – SmartTaskTracker</title>
+    <link rel="stylesheet" href="~/css/futuristic.css" />
+</head>
+<body>
+    <h1 style="text-align:center; margin-top:2rem; color:var(--neon-cyan);">
+        @ViewData["Title"]
+    </h1>
+
+    <!-- Панель с кнопкой Создать и фильтрами, растянутая на всю ширину -->
+    <div class="neon-panel" style="width:100%; margin:2rem auto; padding:1rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn-futuristic btn-futuristic-lg">
+                Создать задачу
+            </a>
+        }
+
+        <form method="get"
+              style="display:flex; align-items:center; gap:1rem; flex:1; min-width:0; flex-wrap:wrap;">
+            <input type="text"
+                   name="search"
+                   value="@currentSearch"
+                   placeholder="Поиск по названию…"
+                   style="flex:2; min-width:200px; padding:0.6rem;" />
+
+            <select name="status"
+                    style="flex:1; min-width:150px; padding:0.6rem;">
+                <option value="">Все статусы</option>
+                @foreach (TaskStatus s in Enum.GetValues(typeof(TaskStatus)))
+                {
+                    var val = (int)s;
+                    if (currentStatus == val.ToString())
+                    {
+                        <option value="@val" selected>@s</option>
+                    }
+                    else
+                    {
+                        <option value="@val">@s</option>
+                    }
+                }
+            </select>
+
+            <select name="sort"
+                    style="flex:1; min-width:150px; padding:0.6rem;">
+                @if (string.IsNullOrEmpty(currentSort))
+                {
+                    <option value="" selected>Id</option>
+                }
+                else
+                {
+                    <option value="">Id</option>
+                }
+                @if (currentSort == "deadline")
+                {
+                    <option value="deadline" selected>Дедлайн</option>
+                }
+                else
+                {
+                    <option value="deadline">Дедлайн</option>
+                }
+                @if (currentSort == "executor")
+                {
+                    <option value="executor" selected>Исполнитель</option>
+                }
+                else
+                {
+                    <option value="executor">Исполнитель</option>
+                }
+            </select>
+
+            <button type="submit" class="btn-futuristic" style="flex:0 0 auto;">
+                Применить
+            </button>
+        </form>
     </div>
-    <div class="col">
-        <select name="sort" class="form-select">
-            <option value="">Id</option>
-            <option value="deadline" selected="@(Context.Request.Query["sort"]=="deadline"?"selected":null)">Deadline</option>
-            <option value="executor" selected="@(Context.Request.Query["sort"]=="executor"?"selected":null)">Executor</option>
-        </select>
+
+    <!-- Панель с таблицей, тоже на всю ширину -->
+    <div class="neon-panel" style="width:100%; margin:0 auto 2rem; padding:1rem; overflow-x:auto;">
+        <table class="table-futuristic" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Title)</th>
+                    <th>@Html.DisplayNameFor(m => m.DeadlineUtc)</th>
+                    <th>@Html.DisplayNameFor(m => m.Status)</th>
+                    <th>@Html.DisplayNameFor(m => m.Executor.UserName)</th>
+                    <th>@Html.DisplayNameFor(m => m.Event.Title)</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.DeadlineUtc.ToString("g")</td>
+                        <td>@item.Status</td>
+                        <td>@item.Executor.UserName</td>
+                        <td>@item.Event.Title</td>
+                        <td style="white-space:nowrap;">
+                            <a asp-action="Report" asp-route-id="@item.Id" class="btn-futuristic">Report</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-futuristic">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn-futuristic">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-    <div class="col"><button type="submit" class="btn btn-primary">Filter</button></div>
-</form>
-<table class="table">
-    <tr><th>Title</th><th>Deadline</th><th>Status</th><th>Report</th><th>Executor</th><th>Event</th><th></th></tr>
-    @foreach(var item in Model)
-    {
-        <tr>
-            <td>@item.Title</td>
-            <td>@item.DeadlineUtc</td>
-            <td>@item.Status</td>
-            <td>@item.Report</td>
-            <td>@item.Executor.UserName</td>
-            <td>@item.Event.Title</td>
-            <td>
-            @if (User.IsInRole("Admin"))
-            {
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><span class="mx-1">|</span>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            }
-            else
-            {
-                <a asp-action="Report" asp-route-id="@item.Id">Report</a>
-            }
-            </td>
-        </tr>
-    }
-</table>
-@if (User.IsInRole("Admin"))
-{
-    <p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
-}
+</body>
+</html>

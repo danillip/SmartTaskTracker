@@ -1,8 +1,19 @@
 @model SmartTaskTracker.Models.Event
-<h2>Delete Event</h2>
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <p>Are you sure you want to delete @Model.Title?</p>
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+
+@{
+    ViewData["Title"] = "Удалить событие";
+}
+
+<div class="neon-panel" style="width:90%; max-width:600px; margin:2rem auto;">
+    <h1 style="text-align:center; color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); margin-bottom:1.5rem;">
+        @ViewData["Title"]
+    </h1>
+
+    <p>Вы уверены, что хотите удалить событие «<strong>@Model.Title</strong>»?</p>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn-futuristic">Удалить</button>
+        <a asp-action="Index" class="btn-futuristic">Отмена</a>
+    </form>
+</div>

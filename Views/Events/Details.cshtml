@@ -1,16 +1,33 @@
 @model SmartTaskTracker.Models.Event
-<h2>Event Details</h2>
-<div>
-    <h4>@Model.Title</h4>
-    <dl class="row">
-        <dt class="col-sm-2">Start</dt>
-        <dd class="col-sm-10">@Model.StartUtc</dd>
-        <dt class="col-sm-2">End</dt>
-        <dd class="col-sm-10">@Model.EndUtc</dd>
-    </dl>
-    <a asp-action="Ics" asp-route-id="@Model.Id">Download ICS</a>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+@{
+    ViewData["Title"] = "Просмотр события";
+}
+
+<div class="neon-panel" style="width:90%; max-width:600px; margin:2rem auto;">
+    <h1 style="text-align:center; color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); margin-bottom:1.5rem;">
+        @ViewData["Title"]
+    </h1>
+
+    <div class="form-group">
+        <label class="form-label">Название</label>
+        <div>@Model.Title</div>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Начало</label>
+        <div>@Model.StartUtc.ToString("g")</div>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Окончание</label>
+        <div>@Model.EndUtc.ToString("g")</div>
+    </div>
+
+    <div style="text-align:right; margin-top:1.5rem;">
+        <a asp-action="Index" class="btn-futuristic">Назад</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-futuristic">Редактировать</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-futuristic">Удалить</a>
+        }
+    </div>
 </div>

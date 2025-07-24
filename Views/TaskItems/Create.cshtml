@@ -1,77 +1,94 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
 @model SmartTaskTracker.Models.TaskItem
-@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "������� ������";
+    ViewData["Title"] = "Создать задачу";
+    var execList = ViewData["ExecutorId"] as SelectList;
+    var evList = ViewData["EventId"] as SelectList;
 }
 
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - SmartTaskTracker</title>
+    <link rel="stylesheet" href="~/css/futuristic.css" />
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    <div class="neon-panel">
+        @if (User.IsInRole("Admin"))
+        {
+            <form asp-action="Create" method="post" id="createForm">
+                @Html.AntiForgeryToken()
 
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-    <!-- Title -->
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Название</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DeadlineUtc" class="form-label">Дедлайн</label>
+                    <input asp-for="DeadlineUtc" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="DeadlineUtc" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Report" class="form-label">Отчёт (опционально)</label>
+                    <textarea asp-for="Report" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Report" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Статус</label>
+                    <select asp-for="Status"
+                            class="form-select"
+                            asp-items="@(Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>())">
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ExecutorId" class="form-label">Исполнитель</label>
+                    <select asp-for="ExecutorId"
+                            asp-items="execList"
+                            asp-option-label="-- Выберите исполнителя --"
+                            class="form-select">
+                    </select>
+                    <span asp-validation-for="ExecutorId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventId" class="form-label">Событие</label>
+                    <select asp-for="EventId"
+                            asp-items="evList"
+                            asp-option-label="-- Выберите событие --"
+                            class="form-select">
+                    </select>
+                    <span asp-validation-for="EventId" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-futuristic">Создать</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-danger">У вас нет прав для создания задач.</p>
+        }
     </div>
 
-    <!-- Deadline -->
-    <div class="mb-3">
-        <label asp-for="DeadlineUtc" class="form-label"></label>
-        <input asp-for="DeadlineUtc"
-               type="datetime-local"
-               class="form-control"
-               asp-format="{0:yyyy-MM-ddTHH:mm}" />
-        <span asp-validation-for="DeadlineUtc" class="text-danger"></span>
-    </div>
-
-    <!-- Status -->
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status"
-                class="form-select"
-                asp-items="Html.GetEnumSelectList<SmartTaskTracker.Models.TaskStatus>()">
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <!-- Event -->
-    <div class="mb-3">
-        <label asp-for="EventId" class="form-label"></label>
-        <select asp-for="EventId"
-                class="form-select"
-                asp-items="@(ViewData["EventId"] as SelectList)">
-        </select>
-        <span asp-validation-for="EventId" class="text-danger"></span>
-    </div>
-
-    <!-- Executor -->
-    <div class="mb-3">
-        <label asp-for="ExecutorId" class="form-label"></label>
-        <select asp-for="ExecutorId"
-                class="form-select"
-                asp-items="@(ViewData["ExecutorId"] as SelectList)">
-        </select>
-        <span asp-validation-for="ExecutorId" class="text-danger"></span>
-    </div>
-
-    <!-- Report -->
-    <div class="mb-3">
-        <label asp-for="Report" class="form-label"></label>
-        <textarea asp-for="Report" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="Report" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">�������</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">������</a>
-</form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        console.log("DEBUG: Create.cshtml загружен");
+        $("#createForm").on("submit", function() {
+            console.log("DEBUG: Create form data →", $(this).serialize());
+        });
+    </script>
+</body>
+</html>

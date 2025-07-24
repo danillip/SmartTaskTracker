@@ -1,0 +1,13 @@
+@model SmartTaskTracker.Models.AppUser
+@{
+    ViewData["Title"] = "Delete User";
+}
+<div class="neon-panel" style="width:90%; max-width:600px; margin:2rem auto; text-align:center;">
+    <h1 style="color:var(--neon-cyan); margin-bottom:1.5rem;">@ViewData["Title"]</h1>
+    <h3>Are you sure you want to delete @Model.UserName?</h3>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn-futuristic">Delete</button>
+        <a asp-action="Index" class="btn-futuristic">Back</a>
+    </form>
+</div>
